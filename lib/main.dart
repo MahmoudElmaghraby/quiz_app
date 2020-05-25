@@ -1,55 +1,80 @@
 import 'package:flutter/material.dart';
 
+import 'quiz.dart';
+import 'result.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
-
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  var _questionIndex = 0;
+  final _questions = const [
+    {
+      'questionText': 'What\'s your favorit color?',
+      'answers': [
+        {'text': 'Black', 'score': 1},
+        {'text': 'Yallow', 'score': 2},
+        {'text': 'Red', 'score': 3},
+        {'text': 'Green', 'score': 4}
+      ],
+    },
+    {
+      'questionText': 'What\'s your favorit animal?',
+      'answers': [
+        {'text': 'Rabit', 'score': 1},
+        {'text': 'Snake', 'score': 2},
+        {'text': 'Elephant', 'score': 3},
+        {'text': 'Lion', 'score': 4}
+      ],
+    },
+    {
+      'questionText': 'Who\'s your favorit learner?',
+      'answers': [
+        {'text': 'You', 'score': 1},
+        {'text': 'You', 'score': 2},
+        {'text': 'You', 'score': 3},
+        {'text': 'You', 'score': 4}
+      ],
+    },
+  ];
 
-  void _answerQuestion() {
-    
+  void _resetQuiz(){
+    setState(() {
+      _totalScore = 0;
+      _questionIndex = 0;
+    });
+  }
+
+  var _questionIndex = 0;
+  var _totalScore = 0;
+
+
+
+  void _answerQuestion(int score) {
+    _totalScore += score;
     setState(() {
       _questionIndex += 1;
     });
-    
   }
 
   @override
-  var questions = [
-    'What\'s your favorite color?',
-    'What\'s your favorite animal?'
-  ];
-
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: Text('Quiz app'),
         ),
-        body: Column(
-          children: <Widget>[
-            Text(
-              questions[_questionIndex],
-            ),
-            RaisedButton(
-              onPressed: _answerQuestion,
-              child: Text('Answer 1'),
-            ),
-            RaisedButton(
-              onPressed: _answerQuestion,
-              child: Text('Answer 2'),
-            ),
-            RaisedButton(
-              onPressed: _answerQuestion,
-              child: Text('Answer 3'),
-            ),
-          ],
-        ),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                questionIndex: _questionIndex,
+                questions: _questions,
+              )
+            : Result(_totalScore , _resetQuiz),
       ),
     );
   }
